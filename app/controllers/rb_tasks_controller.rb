@@ -17,6 +17,10 @@ class RbTasksController < RbApplicationController
     status = (result == 0 ? 200 : 400)
     @include_meta = true
 
+    if status == 200 then
+      call_hook(:controller_issues_new_after_save, { :params => params, :issue => @task})
+    end
+
     respond_to do |format|
       format.html { render :partial => "task", :object => @task, :status => status }
     end
@@ -28,6 +32,10 @@ class RbTasksController < RbApplicationController
     result = @task.update_with_relationships(params)
     status = (result ? 200 : 400)
     @include_meta = true
+
+    if status == 200 then
+      call_hook(:controller_issues_edit_after_save, { :params => params, :issue => @task, :journal => nil})
+    end
 
     @task.story.story_follow_task_state if @task.story
 

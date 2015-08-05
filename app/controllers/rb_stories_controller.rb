@@ -38,6 +38,10 @@ class RbStoriesController < RbApplicationController
 
     status = (story.id ? 200 : 400)
 
+    if status == 200 then
+      call_hook(:controller_issues_new_after_save, { :params => params, :issue => story})
+    end
+
     respond_to do |format|
       format.html { render :partial => "story", :object => story, :status => status }
     end
@@ -53,6 +57,10 @@ class RbStoriesController < RbApplicationController
     end
 
     status = (result ? 200 : 400)
+
+    if status == 200 then
+      call_hook(:controller_issues_edit_after_save, { :params => params, :issue => story, :journal => nil})
+    end
 
     respond_to do |format|
       format.html { render :partial => "story", :object => story, :status => status }
