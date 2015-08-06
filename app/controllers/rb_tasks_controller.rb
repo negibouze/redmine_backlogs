@@ -34,7 +34,9 @@ class RbTasksController < RbApplicationController
     @include_meta = true
 
     if status == 200 then
-      call_hook(:controller_issues_edit_after_save, { :params => params, :issue => @task, :journal => nil})
+      issue = Issue.find_by_id(params[:id])
+      journal = Journal.find_by_journalized_id(params[:id])
+      call_hook(:controller_issues_edit_after_save, { :params => params, :issue => issue, :journal => journal})
     end
 
     @task.story.story_follow_task_state if @task.story
