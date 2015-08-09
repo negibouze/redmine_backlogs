@@ -18,7 +18,10 @@ class RbTasksController < RbApplicationController
     @include_meta = true
 
     if status == 200 then
-      call_hook(:controller_issues_new_after_save, { :params => params, :issue => @task})
+      cf = ProjectCustomField.find_by_name("Additional call hook")
+      if CustomValue.exists?(:custom_field_id => cf.id, :value => "Task create") then
+        call_hook(:controller_issues_new_after_save, { :params => params, :issue => @task})
+      end
     end
 
     respond_to do |format|
@@ -34,9 +37,12 @@ class RbTasksController < RbApplicationController
     @include_meta = true
 
     if status == 200 then
-      issue = Issue.find_by_id(params[:id])
-      journal = Journal.find_by_journalized_id(params[:id])
-      call_hook(:controller_issues_edit_after_save, { :params => params, :issue => issue, :journal => journal})
+      cf = ProjectCustomField.find_by_name("Additional call hook")
+      if CustomValue.exists?(:custom_field_id => cf.id, :value => "Task update") then
+        issue = Issue.find_by_id(params[:id])
+        journal = Journal.find_by_journalized_id(params[:id])
+        call_hook(:controller_issues_edit_after_save, { :params => params, :issue => issue, :journal => journal})
+      end
     end
 
     @task.story.story_follow_task_state if @task.story
