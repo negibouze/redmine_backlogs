@@ -39,12 +39,7 @@ class RbStoriesController < RbApplicationController
     status = (story.id ? 200 : 400)
 
     if status == 200 then
-      cf = ProjectCustomField.find_by_name("Additional call hook")
-      if CustomValue.exists?(:custom_field_id => cf.id, :value => "Story create") then
-        issue = Issue.find_by_id(story.id)
-        issue.description = ""
-        call_hook(:controller_issues_new_after_save, { :params => params, :issue => issue})
-      end
+      call_hook(:controller_stories_new_after_save, { :params => params, :story => story})
     end
 
     respond_to do |format|
@@ -64,12 +59,7 @@ class RbStoriesController < RbApplicationController
     status = (result ? 200 : 400)
 
     if status == 200 then
-      cf = ProjectCustomField.find_by_name("Additional call hook")
-      if CustomValue.exists?(:custom_field_id => cf.id, :value => "Story update") then
-        issue = Issue.find_by_id(story.id)
-        journal = Journal.find_by_journalized_id(story.id)
-        call_hook(:controller_issues_edit_after_save, { :params => params, :issue => story, :journal => journal})
-      end
+      call_hook(:controller_stories_edit_after_save, { :params => params})
     end
 
     respond_to do |format|
